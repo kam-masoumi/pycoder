@@ -47,7 +47,7 @@ class MainWindow(QMainWindow, TextEditor, MenuBar, ThemeEdit, Tabs):
             f = open(fileDirectory[0], 'r')
             with f:
                 data = f.read()
-                self.createTab(data, fileName)
+                self.createTab(data, fileName, fileDirectory[0])
 
     def save(self):
         self.statusBar().showMessage('Add extension to file name')

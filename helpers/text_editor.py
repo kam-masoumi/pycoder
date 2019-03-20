@@ -13,4 +13,5 @@ class TextEditor:
 
         textEdit = QTextEdit()
         textEdit.setFont(font)
+
         return textEdit
