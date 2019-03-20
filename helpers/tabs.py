@@ -40,9 +40,11 @@ class Tabs:
         self.tabs.tabBarClicked.connect(self.changeStatusBar)
         cache.setdefault(file_name, directory)
 
-        self.setCentralWidget(self.tabs.currentWidget())
+        self.setCentralWidget(self.tabs)
 
     def closeTab(self, index):
+        currentTabName = self.tabs.tabText(index)
+        cache.pop(currentTabName)
         self.tabs.removeTab(index)
         return index
 
