@@ -12,6 +12,7 @@ class TextEditor:
         font.setPointSize(16)
 
         textEdit = QTextEdit()
+        textEdit.setAcceptDrops(False)
         textEdit.setFont(font)
 
         return textEdit

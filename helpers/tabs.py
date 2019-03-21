@@ -15,6 +15,7 @@ class Tabs:
         self.tabs.setMovable(True)
         self.tabs.setStyleSheet("border: solid;")
         self.tabs.tabCloseRequested.connect(self.closeTab)
+        self.setAcceptDrops(True)
 
     def createTab(self, data, file_name, directory):
         oldFileDirectory = cache.get(file_name)

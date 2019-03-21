@@ -22,7 +22,6 @@ class MainWindow(QMainWindow, TextEditor, MenuBar, ThemeEdit, Tabs):
         backGround.setPixmap(QPixmap("python.png"))
         self.setCentralWidget(backGround)
         self.resize(500, 500)
-        self.setAcceptDrops(True)
 
     def closeEvent(self, event):
 
@@ -90,6 +89,8 @@ class MainWindow(QMainWindow, TextEditor, MenuBar, ThemeEdit, Tabs):
     def dropEvent(self, event):
         fileDirectory = event.mimeData().text()[7:-2]
         fileName = fileDirectory.split('/')[-1]
+        if fileName[-2:] != 'py':
+            return event.ignore()
         f = open(fileDirectory, 'r')
         with f:
             data = f.read()
