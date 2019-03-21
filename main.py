@@ -21,7 +21,8 @@ class MainWindow(QMainWindow, TextEditor, MenuBar, ThemeEdit, Tabs):
         backGround.setAlignment(Qt.AlignCenter)
         backGround.setPixmap(QPixmap("python.png"))
         self.setCentralWidget(backGround)
-        self.resize(500,500)
+        self.resize(500, 500)
+        self.setAcceptDrops(True)
 
     def closeEvent(self, event):
 
@@ -79,3 +80,17 @@ class MainWindow(QMainWindow, TextEditor, MenuBar, ThemeEdit, Tabs):
         url = "https://github.com/kam-masoumi/pycoder"
         self.statusBar().showMessage('Loading url...')
         webbrowser.open(url)
+
+    def dragEnterEvent(self, event):
+        if event.mimeData().hasFormat('text/plain'):
+            event.accept()
+        else:
+            event.ignore()
+
+    def dropEvent(self, event):
+        fileDirectory = event.mimeData().text()[7:-2]
+        fileName = fileDirectory.split('/')[-1]
+        f = open(fileDirectory, 'r')
+        with f:
+            data = f.read()
+            self.createTab(data, fileName, fileDirectory)
