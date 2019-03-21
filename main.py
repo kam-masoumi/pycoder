@@ -1,26 +1,29 @@
 import webbrowser
 
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QPixmap
-from PyQt5.QtWidgets import QMainWindow, QFileDialog, QMessageBox, QLabel
+from PyQt5.QtGui import QPixmap, QCursor, QColor, QFont
+from PyQt5.QtWidgets import QMainWindow, QFileDialog, QMessageBox, QLabel, QMenu, QAction
 
 from helpers.menubar import MenuBar
 from helpers.themes import ThemeEdit
 from helpers.tabs import Tabs
 from helpers.text_editor import TextEditor
+from helpers.dock_window import DockWindows
 
 
-class MainWindow(QMainWindow, TextEditor, MenuBar, ThemeEdit, Tabs):
+class MainWindow(QMainWindow, TextEditor, MenuBar, ThemeEdit, Tabs, DockWindows):
     def __init__(self):
         super(MainWindow, self).__init__()
         self.initTabUI()
         self.initThemeUI()
         self.initMenuUI()
         self.setWindowTitle("PyCoder")
+
         backGround = QLabel()
         backGround.setAlignment(Qt.AlignCenter)
         backGround.setPixmap(QPixmap("python.png"))
         self.setCentralWidget(backGround)
+
         self.resize(500, 500)
 
     def closeEvent(self, event):
@@ -95,3 +98,33 @@ class MainWindow(QMainWindow, TextEditor, MenuBar, ThemeEdit, Tabs):
         with f:
             data = f.read()
             self.createTab(data, fileName, fileDirectory)
+
+    def contextMenuEvent(self, event):
+        self.menu = QMenu(self)
+        runAction = QAction('Run', self)
+        runAction.triggered.connect(lambda: self.run_command())
+        self.menu.addAction(runAction)
+        self.menu.popup(QCursor.pos())
+
+    def run_command(self):
+        import subprocess
+        cmd = ['python', 'ss.py']
+        runFile = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        out, err = runFile.communicate()
+
+        redColor = QColor(220,20,60)
+        whiteColor = QColor(255, 255, 255)
+        font = QFont()
+        font.setFamily('Courier')
+        font.setBold(True)
+        font.setPointSize(12)
+        self.terminalShow.setFont(font)
+
+        if len(out.decode()) >= 1:
+            self.terminalShow.setTextColor(whiteColor)
+            self.terminalShow.append(out.decode())
+        self.terminalShow.setTextColor(redColor)
+        self.terminalShow.append(err.decode())
+
+        self.terminalShow.setTextColor(whiteColor)
+        self.terminalShow.append('Process finished with exit code 0')

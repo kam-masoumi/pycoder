@@ -2,11 +2,13 @@ from PyQt5.QtWidgets import QAction
 from PyQt5.QtGui import QIcon
 
 from helpers.text_editor import TextEditor
-
+from helpers.dock_window import DockWindows
 
 class MenuBar:
 
     def initMenuUI(self):
+        directoryDock = DockWindows.directoryDockWindow(self)
+        terminalDock = DockWindows.terminalDockWindow(self)
         c = TextEditor.createTextEditor()
         exitAction = QAction(QIcon('exit.png'), 'Exit', self)
         exitAction.setShortcut('Ctrl+Q')
@@ -71,6 +73,9 @@ class MenuBar:
         fileMenu2.addAction(pasteAction)
         fileMenu3 = menubar.addMenu('&Help')
         fileMenu3.addAction(aboutAction)
+        fileMenu4 = menubar.addMenu("&View")
+        fileMenu4.addAction(directoryDock.toggleViewAction())
+        fileMenu4.addAction(terminalDock.toggleViewAction())
 
         self.setWindowIcon(QIcon('text.png'))
         self.show()
