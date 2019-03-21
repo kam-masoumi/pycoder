@@ -1,8 +1,8 @@
 import webbrowser
 
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QPixmap, QCursor, QColor, QFont
-from PyQt5.QtWidgets import QMainWindow, QFileDialog, QMessageBox, QLabel, QMenu, QAction
+from PyQt5.QtGui import QPixmap, QColor, QFont
+from PyQt5.QtWidgets import QMainWindow, QFileDialog, QMessageBox, QLabel
 
 from helpers.menubar import MenuBar
 from helpers.themes import ThemeEdit
@@ -25,6 +25,7 @@ class MainWindow(QMainWindow, TextEditor, MenuBar, ThemeEdit, Tabs, DockWindows)
         self.setCentralWidget(backGround)
 
         self.resize(500, 500)
+        self.list = []
 
     def closeEvent(self, event):
 
@@ -99,25 +100,27 @@ class MainWindow(QMainWindow, TextEditor, MenuBar, ThemeEdit, Tabs, DockWindows)
             data = f.read()
             self.createTab(data, fileName, fileDirectory)
 
-    def contextMenuEvent(self, event):
-        self.menu = QMenu(self)
-        runAction = QAction('Run', self)
-        runAction.triggered.connect(lambda: self.run_command())
-        self.menu.addAction(runAction)
-        self.menu.popup(QCursor.pos())
-
-    def run_command(self):
+    def runCommand(self):
         import subprocess
-        cmd = ['python', 'ss.py']
+        self.terminalShow.clear()
+
+        try:
+            directory = self.list[0]
+        except IndexError:
+            QMessageBox.warning(self, 'Error',
+                                "Not found any file for run!")
+            return False
+
+        cmd = ['python', f'{directory}']
         runFile = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         out, err = runFile.communicate()
 
-        redColor = QColor(220,20,60)
+        redColor = QColor(220, 20, 60)
         whiteColor = QColor(255, 255, 255)
         font = QFont()
         font.setFamily('Courier')
         font.setBold(True)
-        font.setPointSize(12)
+        font.setPointSize(12.5)
         self.terminalShow.setFont(font)
 
         if len(out.decode()) >= 1:

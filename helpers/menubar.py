@@ -1,5 +1,5 @@
-from PyQt5.QtWidgets import QAction
-from PyQt5.QtGui import QIcon
+from PyQt5.QtWidgets import QAction, QMenu
+from PyQt5.QtGui import QIcon, QCursor
 
 from helpers.text_editor import TextEditor
 from helpers.dock_window import DockWindows
@@ -59,6 +59,11 @@ class MenuBar:
         aboutAction.setStatusTip('About')
         aboutAction.triggered.connect(self.about)
 
+        runAction = QAction(QIcon('run.png'), 'Run', self)
+        runAction.setStatusTip('Run selected configuration')
+        runAction.setShortcut('Ctrl+Shift+R')
+        runAction.triggered.connect(lambda: self.runCommand())
+
         menubar = self.menuBar()
         fileMenu = menubar.addMenu('&File')
         fileMenu.addAction(newAction)
@@ -76,6 +81,15 @@ class MenuBar:
         fileMenu4 = menubar.addMenu("&View")
         fileMenu4.addAction(directoryDock.toggleViewAction())
         fileMenu4.addAction(terminalDock.toggleViewAction())
+        fileMenu5 = menubar.addMenu('&Tools')
+        fileMenu5.addAction(runAction)
 
         self.setWindowIcon(QIcon('text.png'))
         self.show()
+
+    def contextMenuEvent(self, event):
+        self.menu = QMenu(self)
+        runAction = QAction(QIcon('run.png'), 'Run', self)
+        runAction.triggered.connect(lambda: self.runCommand())
+        self.menu.addAction(runAction)
+        self.menu.popup(QCursor.pos())

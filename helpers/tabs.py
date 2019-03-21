@@ -1,7 +1,7 @@
 from linecache import cache
 
 from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QTabWidget, QGridLayout, QTextEdit
+from PyQt5.QtWidgets import QTabWidget, QGridLayout
 
 from helpers.highlighter import Highlighter
 from helpers.text_editor import TextEditor
@@ -43,10 +43,14 @@ class Tabs:
         self.setCentralWidget(self.tabs)
         self.statusBar().showMessage(directory)
 
+        self.list.clear()
+        self.list.append(directory)
+
     def closeTab(self, index):
         currentTabName = self.tabs.tabText(index)
         try:
             cache.pop(currentTabName)
+            self.list.clear()
         except KeyError:
             pass
         self.tabs.removeTab(index)
@@ -60,4 +64,6 @@ class Tabs:
         self.highlighter = Highlighter(currentTabWidget)
         currentTabName = self.tabs.tabText(index)
         currentDirectory = cache.get(currentTabName)
+        self.list.clear()
+        self.list.append(currentDirectory)
         self.statusBar().showMessage(currentDirectory)

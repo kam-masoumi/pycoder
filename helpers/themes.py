@@ -2,16 +2,14 @@ class ThemeEdit:
 
     def initThemeUI(self):
         self.setStyleSheet("""
-        QWidget {
+                             QWidget {
                                  background-color: rgb(49,49,49);
                                  color: rgb(255,255,255);
-                                 border: 1px solid ;
                              }
                              
                              QTextEdit {
                                  background-color: rgb(49,49,49);
                                  color: rgb(255,255,255);
-                                 border: 1px solid ;
                              }
 
                              QMainWindow {
