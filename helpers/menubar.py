@@ -9,7 +9,7 @@ class MenuBar:
     def initMenuUI(self):
         directoryDock = DockWindows.directoryDockWindow(self)
         terminalDock = DockWindows.terminalDockWindow(self)
-        c = TextEditor.createTextEditor()
+        c = TextEditor.createTextEditor(self)
         exitAction = QAction(QIcon('exit.png'), 'Exit', self)
         exitAction.setShortcut('Ctrl+Q')
         exitAction.setStatusTip('Exit application')

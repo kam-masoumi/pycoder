@@ -6,7 +6,7 @@ class ThemeEdit:
                                  background-color: rgb(49,49,49);
                                  color: rgb(255,255,255);
                              }
-                             
+
                              QTextEdit {
                                  background-color: rgb(49,49,49);
                                  color: rgb(255,255,255);
@@ -52,11 +52,11 @@ class ThemeEdit:
                                   color: red;
                                   }
                              QTabBar::tab {
-                                   background-color: rgb(49,49,49); 
+                                   background-color: rgb(49,49,49);
                                    color: white;
                              }
                              QTabBar::tab:selected {
-                                   background-color: white; 
+                                   background-color: white;
                                    color: rgb(49,49,49);
                              }
                         """)

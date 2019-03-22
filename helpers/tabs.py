@@ -1,7 +1,7 @@
 from linecache import cache
 
 from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QTabWidget, QGridLayout
+from PyQt5.QtWidgets import QTabWidget
 
 from helpers.highlighter import Highlighter
 from helpers.text_editor import TextEditor
@@ -16,6 +16,7 @@ class Tabs:
         self.tabs.setStyleSheet("border: solid;")
         self.tabs.tabCloseRequested.connect(self.closeTab)
         self.setAcceptDrops(True)
+        self.tabs.tabBarClicked.connect(self.changeStatusBar)
 
     def createTab(self, data, file_name, directory):
         oldFileDirectory = cache.get(file_name)
@@ -27,30 +28,28 @@ class Tabs:
         else:
             pass
 
-        tabLayout = QGridLayout()
-        newTab = TextEditor().createTextEditor()
-        newTab.setText(data)
+        newTextEditor = TextEditor().createTextEditor(directory)
+        newTextEditor.setText(data)
 
-        tabLayout.addWidget(newTab)
-        self.tabs.addTab(newTab, f'{file_name}')
-        tabIndex = self.tabs.indexOf(newTab)
+        self.tabs.addTab(newTextEditor, f'{file_name}')
+
+        tabIndex = self.tabs.indexOf(newTextEditor)
         self.tabs.setTabIcon(tabIndex, QIcon('python1.png'))
-        self.tabs.tabBarClicked.connect(self.changeStatusBar)
         cache.setdefault(file_name, directory)
 
-        self.tabs.setCurrentWidget(newTab)
+        self.tabs.setCurrentWidget(newTextEditor)
         self.changeStatusBar(-1)
         self.setCentralWidget(self.tabs)
         self.statusBar().showMessage(directory)
 
-        self.list.clear()
-        self.list.append(directory)
+        self.lastDirectory.clear()
+        self.lastDirectory.append(directory)
 
     def closeTab(self, index):
         currentTabName = self.tabs.tabText(index)
         try:
             cache.pop(currentTabName)
-            self.list.clear()
+            self.lastDirectory.clear()
         except KeyError:
             pass
         self.tabs.removeTab(index)
@@ -64,6 +63,6 @@ class Tabs:
         self.highlighter = Highlighter(currentTabWidget)
         currentTabName = self.tabs.tabText(index)
         currentDirectory = cache.get(currentTabName)
-        self.list.clear()
-        self.list.append(currentDirectory)
+        self.lastDirectory.clear()
+        self.lastDirectory.append(currentDirectory)
         self.statusBar().showMessage(currentDirectory)

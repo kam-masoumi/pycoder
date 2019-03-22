@@ -22,15 +22,16 @@ class MainWindow(QMainWindow, TextEditor, MenuBar, ThemeEdit, Tabs, DockWindows)
         backGround = QLabel()
         backGround.setAlignment(Qt.AlignCenter)
         backGround.setPixmap(QPixmap("python.png"))
+
         self.setCentralWidget(backGround)
 
         self.resize(500, 500)
-        self.list = []
+        self.lastDirectory = []
 
     def closeEvent(self, event):
 
         reply = QMessageBox.question(self, 'Message',
-                                     "Are you sure to quit without Saving?", QMessageBox.Yes |
+                                     "Are you sure to quit?", QMessageBox.Yes |
                                      QMessageBox.No, QMessageBox.No)
 
         if reply == QMessageBox.Yes:
@@ -39,8 +40,6 @@ class MainWindow(QMainWindow, TextEditor, MenuBar, ThemeEdit, Tabs, DockWindows)
 
         else:
             event.ignore()
-            self.save()
-            event.accept()
 
     def openFile(self):
         self.statusBar().showMessage('Open Text Files ')
@@ -54,16 +53,20 @@ class MainWindow(QMainWindow, TextEditor, MenuBar, ThemeEdit, Tabs, DockWindows)
                 self.createTab(data, fileName, fileDirectory[0])
 
     def save(self):
+        currentTabWidget = self.tabs.currentWidget()
         self.statusBar().showMessage('Add extension to file name')
-        fname = QFileDialog.getSaveFileName(self, 'Save File')
-        data = self.textEdit.toPlainText()
-
-        try:
-            file = open(fname[0], 'w')
-            file.write(data)
-            file.close()
-        except FileNotFoundError:
-            pass
+        options = QFileDialog.Options()
+        options |= QFileDialog.DontUseNativeDialog
+        fileName, _ = QFileDialog.getSaveFileName(self,
+                                                  "Save file",
+                                                  "Pyhton file (*.py)", options=options)
+        if fileName and currentTabWidget is not None:
+            try:
+                data = currentTabWidget.toPlainText()
+                with open(fileName, 'w') as f:
+                    f.write(data)
+            except FileNotFoundError:
+                pass
 
     def copy(self):
         cursor = self.textEdit.textCursor()
