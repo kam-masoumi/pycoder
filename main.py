@@ -108,7 +108,7 @@ class MainWindow(QMainWindow, TextEditor, MenuBar, ThemeEdit, Tabs, DockWindows)
         self.terminalShow.clear()
 
         try:
-            directory = self.list[0]
+            directory = self.lastDirectory[0]
         except IndexError:
             QMessageBox.warning(self, 'Error',
                                 "Not found any file for run!")
