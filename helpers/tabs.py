@@ -1,7 +1,7 @@
 from linecache import cache
 
 from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QTabWidget
+from PyQt5.QtWidgets import QTabWidget, QTextEdit
 
 from helpers.highlighter import Highlighter
 from helpers.text_editor import TextEditor
@@ -28,8 +28,13 @@ class Tabs:
         else:
             pass
 
-        newTextEditor = TextEditor().createTextEditor(directory)
+        newTextEditor = TextEditor(directory)
         newTextEditor.setText(data)
+        newTextEditor.setCompleter(self.completer)
+        newTextEditor.setLineWrapMode(QTextEdit.NoWrap)
+
+        newTextEditor.setAcceptDrops(False)
+        newTextEditor.setViewportMargins(50, 0, 0, 0)
 
         self.tabs.addTab(newTextEditor, f'{file_name}')
 

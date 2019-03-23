@@ -1,24 +1,33 @@
 import webbrowser
 
-from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QPixmap
-from PyQt5.QtWidgets import QMainWindow, QFileDialog, QMessageBox, QLabel
+from PyQt5.QtCore import Qt, QFile, QStringListModel
+from PyQt5.QtGui import QPixmap, QCursor, QIcon
+from PyQt5.QtWidgets import QMainWindow, QFileDialog, QMessageBox, QLabel, QCompleter, QApplication, QTextEdit
 
 from helpers.menubar import MenuBar
 from helpers.themes import ThemeEdit
 from helpers.tabs import Tabs
-from helpers.text_editor import TextEditor
 from helpers.dock_window import DockWindows
 
 
-class MainWindow(QMainWindow, TextEditor, MenuBar, ThemeEdit, Tabs, DockWindows):
+class MainWindow(QMainWindow, MenuBar, ThemeEdit, Tabs, DockWindows):
     def __init__(self):
         super(MainWindow, self).__init__()
         self.initTabUI()
         self.initThemeUI()
         self.initMenuUI()
         self.setWindowTitle("PyCoder")
+        self.setWindowIcon(QIcon('pycoder.png'))
 
+        self.completer = QCompleter(self)
+        self.completer.setModel(self.modelFromFile('wordlist.txt'))
+        self.completer.setModelSorting(QCompleter.CaseInsensitivelySortedModel)
+        self.completer.setCaseSensitivity(Qt.CaseInsensitive)
+        self.completer.setWrapAround(False)
+        self.completer.popup().setStyleSheet("background-color: rgb(49,49,49);"
+                                             "color: silver;"
+                                             "font-size: 18px;"
+                                             "width: 20px;")
         backGround = QLabel()
         backGround.setAlignment(Qt.AlignCenter)
         backGround.setPixmap(QPixmap("python.png"))
@@ -68,20 +77,6 @@ class MainWindow(QMainWindow, TextEditor, MenuBar, ThemeEdit, Tabs, DockWindows)
             except FileNotFoundError:
                 pass
 
-    def copy(self):
-        cursor = self.textEdit.textCursor()
-        textSelected = cursor.selectedText()
-        self.copiedtext = textSelected
-
-    def paste(self):
-        self.textEdit.append(self.copiedtext)
-
-    def cut(self):
-        cursor = self.textEdit.textCursor()
-        textSelected = cursor.selectedText()
-        self.copiedtext = textSelected
-        self.textEdit.cut()
-
     def about(self):
         url = "https://github.com/kam-masoumi/pycoder"
         self.statusBar().showMessage('Loading url...')
@@ -102,3 +97,25 @@ class MainWindow(QMainWindow, TextEditor, MenuBar, ThemeEdit, Tabs, DockWindows)
         with f:
             data = f.read()
             self.createTab(data, fileName, fileDirectory)
+
+    def modelFromFile(self, fileName):
+        f = QFile(fileName)
+        if not f.open(QFile.ReadOnly):
+            return QStringListModel(self.completer)
+
+        QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+
+        words = []
+        while not f.atEnd():
+            line = f.readLine().trimmed()
+            if line.length() != 0:
+                try:
+                    line = str(line, encoding='ascii')
+                except TypeError:
+                    line = str(line)
+
+                words.append(line)
+
+        QApplication.restoreOverrideCursor()
+
+        return QStringListModel(words, self.completer)

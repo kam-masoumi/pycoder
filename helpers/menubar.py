@@ -56,9 +56,6 @@ class MenuBar:
         fileMenu5 = menubar.addMenu('&Help')
         fileMenu5.addAction(aboutAction)
 
-        self.setWindowIcon(QIcon('text.png'))
-        self.show()
-
     def contextMenuEvent(self, event):
         self.menu = QMenu(self)
         runAction = QAction(QIcon('run.png'), 'Run', self)
