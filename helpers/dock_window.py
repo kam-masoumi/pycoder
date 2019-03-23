@@ -2,20 +2,23 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon
 
 from PyQt5.QtWidgets import QFileSystemModel, QTreeView, QApplication, \
-    QDockWidget, QTextEdit, QWidget, QPushButton, QVBoxLayout, QGridLayout
+    QDockWidget, QTextEdit, QWidget, QPushButton, QGridLayout
 
 
 class DockWindows:
 
-    def directoryDockWindow(self):
-        model = QFileSystemModel()
-        model.setRootPath('/home/kamran/workspace')
+    def directoryDockWindow(self, directory=None):
+        self.model = QFileSystemModel()
+        self.model.setReadOnly(False)
+        self.model.setRootPath('/home')
+
         tree = QTreeView()
-        tree.setModel(model)
+        tree.setModel(self.model)
+        tree.setRootIndex(self.model.index(f'{directory}'))
+        tree.doubleClicked.connect(self.test)
 
         tree.setAnimated(True)
         tree.setIndentation(20)
-        tree.setSortingEnabled(True)
 
         availableSize = QApplication.desktop().availableGeometry(tree).size()
         tree.resize(availableSize / 2)
@@ -33,13 +36,12 @@ class DockWindows:
         pass
 
     def terminalDockWindow(self):
-
         dockLayout = QGridLayout()
 
         self.terminalShow = QTextEdit()
         self.terminalShow.setReadOnly(True)
 
-        runButton = QPushButton(QIcon('run.png'), '')
+        runButton = QPushButton(QIcon('images/run.png'), '')
         runButton.clicked.connect(self.runCommand)
 
         dock = QDockWidget("Terminal", self)
@@ -54,3 +56,13 @@ class DockWindows:
         dock.setAllowedAreas(Qt.BottomDockWidgetArea)
         dock.hide()
         return dock
+
+    def test(self, signal):
+        directory = self.model.filePath(signal)
+        pythonFile = directory.split('/')[-1]
+        try:
+            if pythonFile[-2:] == 'py':
+                with open(directory, 'r') as f:
+                    self.createTab(f.read(), pythonFile, directory)
+        except IndexError:
+            pass

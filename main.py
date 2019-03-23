@@ -17,7 +17,7 @@ class MainWindow(QMainWindow, MenuBar, ThemeEdit, Tabs, DockWindows):
         self.initThemeUI()
         self.initMenuUI()
         self.setWindowTitle("PyCoder")
-        self.setWindowIcon(QIcon('pycoder.png'))
+        self.setWindowIcon(QIcon('images/pycoder.png'))
 
         self.completer = QCompleter(self)
         self.completer.setModel(self.modelFromFile('wordlist.txt'))
@@ -30,7 +30,7 @@ class MainWindow(QMainWindow, MenuBar, ThemeEdit, Tabs, DockWindows):
                                              "width: 20px;")
         backGround = QLabel()
         backGround.setAlignment(Qt.AlignCenter)
-        backGround.setPixmap(QPixmap("python.png"))
+        backGround.setPixmap(QPixmap("images/python.png"))
 
         self.setCentralWidget(backGround)
 
@@ -56,10 +56,14 @@ class MainWindow(QMainWindow, MenuBar, ThemeEdit, Tabs, DockWindows):
         fileName = fileDirectory[0].split('/')[-1]
         self.statusBar().showMessage(f'{fileDirectory[0]}')
         if fileDirectory[0]:
-            f = open(fileDirectory[0], 'r')
-            with f:
+            with open(fileDirectory[0], 'r') as f:
                 data = f.read()
                 self.createTab(data, fileName, fileDirectory[0])
+
+    def openProject(self):
+        directory = str(QFileDialog.getExistingDirectory(self, "Select Directory"))
+        directoryDock = DockWindows.directoryDockWindow(self, directory)
+        self.fileMenu3.addAction(directoryDock.toggleViewAction())
 
     def save(self):
         currentTabWidget = self.tabs.currentWidget()

@@ -9,34 +9,38 @@ from helpers.dock_window import DockWindows
 class MenuBar:
 
     def initMenuUI(self):
-        directoryDock = DockWindows.directoryDockWindow(self)
         self.terminalDock = DockWindows.terminalDockWindow(self)
 
-        exitAction = QAction(QIcon('exit.png'), 'Exit', self)
+        exitAction = QAction(QIcon('images/exit.png'), 'Exit', self)
         exitAction.setShortcut('Ctrl+Q')
         exitAction.setStatusTip('Exit application')
         exitAction.triggered.connect(self.close)
 
-        newAction = QAction(QIcon('new.png'), 'New', self)
+        newAction = QAction(QIcon('images/new.png'), 'New', self)
         newAction.setShortcut('Ctrl+N')
-        newAction.setStatusTip('New Application')
+        newAction.setStatusTip('New File')
         newAction.triggered.connect(self.__init__)
 
-        openAction = QAction(QIcon('open.png'), 'Open', self)
+        openAction = QAction(QIcon('images/open.png'), 'Open', self)
         openAction.setShortcut('Ctrl+O')
-        openAction.setStatusTip('Open Application')
+        openAction.setStatusTip('Open File')
         openAction.triggered.connect(self.openFile)
 
-        saveAction = QAction(QIcon('save.png'), 'Save', self)
+        openProjectAction = QAction(QIcon('images/open.png'), 'Open project', self)
+        openProjectAction.setShortcut('Ctrl+Shift+O')
+        openProjectAction.setStatusTip('Open Project')
+        openProjectAction.triggered.connect(self.openProject)
+
+        saveAction = QAction(QIcon('images/save.png'), 'Save', self)
         saveAction.setShortcut('Ctrl+S')
-        saveAction.setStatusTip('Save Application')
+        saveAction.setStatusTip('Save File')
         saveAction.triggered.connect(self.save)
 
         aboutAction = QAction('About', self)
         aboutAction.setStatusTip('About')
         aboutAction.triggered.connect(self.about)
 
-        runAction = QAction(QIcon('run.png'), 'Run', self)
+        runAction = QAction(QIcon('images/run.png'), 'Run', self)
         runAction.setStatusTip('Run selected configuration')
         runAction.setShortcut('Ctrl+Shift+R')
         runAction.triggered.connect(lambda: self.runCommand())
@@ -45,12 +49,12 @@ class MenuBar:
         fileMenu = menubar.addMenu('&File')
         fileMenu.addAction(newAction)
         fileMenu.addAction(openAction)
+        fileMenu.addAction(openProjectAction)
         fileMenu.addAction(saveAction)
         fileMenu.addAction(exitAction)
 
-        fileMenu3 = menubar.addMenu("&View")
-        fileMenu3.addAction(directoryDock.toggleViewAction())
-        fileMenu3.addAction(self.terminalDock.toggleViewAction())
+        self.fileMenu3 = menubar.addMenu("&View")
+        self.fileMenu3.addAction(self.terminalDock.toggleViewAction())
         fileMenu4 = menubar.addMenu('&Tools')
         fileMenu4.addAction(runAction)
         fileMenu5 = menubar.addMenu('&Help')
@@ -58,7 +62,7 @@ class MenuBar:
 
     def contextMenuEvent(self, event):
         self.menu = QMenu(self)
-        runAction = QAction(QIcon('run.png'), 'Run', self)
+        runAction = QAction(QIcon('images/run.png'), 'Run', self)
         runAction.triggered.connect(lambda: self.runCommand())
         self.menu.addAction(runAction)
         self.menu.popup(QCursor.pos())
