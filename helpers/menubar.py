@@ -1,7 +1,8 @@
-from PyQt5.QtWidgets import QAction, QMenu
-from PyQt5.QtGui import QIcon, QCursor
+import subprocess
 
-from helpers.text_editor import TextEditor
+from PyQt5.QtWidgets import QAction, QMenu, QMessageBox
+from PyQt5.QtGui import QIcon, QCursor, QColor, QFont
+
 from helpers.dock_window import DockWindows
 
 
@@ -9,7 +10,7 @@ class MenuBar:
 
     def initMenuUI(self):
         directoryDock = DockWindows.directoryDockWindow(self)
-        terminalDock = DockWindows.terminalDockWindow(self)
+        self.terminalDock = DockWindows.terminalDockWindow(self)
 
         exitAction = QAction(QIcon('exit.png'), 'Exit', self)
         exitAction.setShortcut('Ctrl+Q')
@@ -49,7 +50,7 @@ class MenuBar:
 
         fileMenu3 = menubar.addMenu("&View")
         fileMenu3.addAction(directoryDock.toggleViewAction())
-        fileMenu3.addAction(terminalDock.toggleViewAction())
+        fileMenu3.addAction(self.terminalDock.toggleViewAction())
         fileMenu4 = menubar.addMenu('&Tools')
         fileMenu4.addAction(runAction)
         fileMenu5 = menubar.addMenu('&Help')
@@ -64,3 +65,34 @@ class MenuBar:
         runAction.triggered.connect(lambda: self.runCommand())
         self.menu.addAction(runAction)
         self.menu.popup(QCursor.pos())
+
+    def runCommand(self):
+        self.terminalShow.clear()
+
+        try:
+            directory = self.lastDirectory[0]
+        except IndexError:
+            QMessageBox.warning(self, 'Error',
+                                "Not found any file for run!")
+            return False
+        self.terminalDock.show()
+        cmd = ['python', f'{directory}']
+        runFile = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        out, err = runFile.communicate()
+
+        redColor = QColor(220, 20, 60)
+        whiteColor = QColor(255, 255, 255)
+        font = QFont()
+        font.setFamily('Courier')
+        font.setBold(True)
+        font.setPointSize(12.5)
+        self.terminalShow.setFont(font)
+
+        if len(out.decode()) >= 1:
+            self.terminalShow.setTextColor(whiteColor)
+            self.terminalShow.append(out.decode())
+        self.terminalShow.setTextColor(redColor)
+        self.terminalShow.append(err.decode())
+
+        self.terminalShow.setTextColor(whiteColor)
+        self.terminalShow.append('Process finished with exit code 0')

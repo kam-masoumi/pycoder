@@ -1,7 +1,7 @@
 import webbrowser
 
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QPixmap, QColor, QFont
+from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QMainWindow, QFileDialog, QMessageBox, QLabel
 
 from helpers.menubar import MenuBar
@@ -102,35 +102,3 @@ class MainWindow(QMainWindow, TextEditor, MenuBar, ThemeEdit, Tabs, DockWindows)
         with f:
             data = f.read()
             self.createTab(data, fileName, fileDirectory)
-
-    def runCommand(self):
-        import subprocess
-        self.terminalShow.clear()
-
-        try:
-            directory = self.lastDirectory[0]
-        except IndexError:
-            QMessageBox.warning(self, 'Error',
-                                "Not found any file for run!")
-            return False
-
-        cmd = ['python', f'{directory}']
-        runFile = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        out, err = runFile.communicate()
-
-        redColor = QColor(220, 20, 60)
-        whiteColor = QColor(255, 255, 255)
-        font = QFont()
-        font.setFamily('Courier')
-        font.setBold(True)
-        font.setPointSize(12.5)
-        self.terminalShow.setFont(font)
-
-        if len(out.decode()) >= 1:
-            self.terminalShow.setTextColor(whiteColor)
-            self.terminalShow.append(out.decode())
-        self.terminalShow.setTextColor(redColor)
-        self.terminalShow.append(err.decode())
-
-        self.terminalShow.setTextColor(whiteColor)
-        self.terminalShow.append('Process finished with exit code 0')

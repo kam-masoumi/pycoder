@@ -39,4 +39,5 @@ class DockWindows:
         dock.setAllowedAreas(Qt.BottomDockWidgetArea)
         self.addDockWidget(Qt.BottomDockWidgetArea, dock)
         dock.setWidget(self.terminalShow)
+        dock.hide()
         return dock
