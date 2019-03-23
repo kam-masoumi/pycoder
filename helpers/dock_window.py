@@ -1,6 +1,8 @@
 from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QIcon
 
-from PyQt5.QtWidgets import QFileSystemModel, QTreeView, QApplication, QDockWidget, QTextEdit
+from PyQt5.QtWidgets import QFileSystemModel, QTreeView, QApplication, \
+    QDockWidget, QTextEdit, QWidget, QPushButton, QVBoxLayout, QGridLayout
 
 
 class DockWindows:
@@ -31,13 +33,24 @@ class DockWindows:
         pass
 
     def terminalDockWindow(self):
+
+        dockLayout = QGridLayout()
+
         self.terminalShow = QTextEdit()
         self.terminalShow.setReadOnly(True)
 
+        runButton = QPushButton(QIcon('run.png'), '')
+        runButton.clicked.connect(self.runCommand)
+
         dock = QDockWidget("Terminal", self)
-        dock.setMinimumHeight(150)
-        dock.setAllowedAreas(Qt.BottomDockWidgetArea)
         self.addDockWidget(Qt.BottomDockWidgetArea, dock)
-        dock.setWidget(self.terminalShow)
+
+        dockedWidget = QWidget(self)
+        dock.setWidget(dockedWidget)
+        dockedWidget.setLayout(dockLayout)
+        dockedWidget.layout().addWidget(runButton, 0, 0, Qt.AlignTop)
+        dockedWidget.layout().addWidget(self.terminalShow, 0, 1)
+
+        dock.setAllowedAreas(Qt.BottomDockWidgetArea)
         dock.hide()
         return dock

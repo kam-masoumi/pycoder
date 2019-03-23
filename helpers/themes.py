@@ -10,6 +10,7 @@ class ThemeEdit:
                              QTextEdit {
                                  background-color: rgb(49,49,49);
                                  color: rgb(255,255,255);
+                                 border: 0px;
                              }
 
                              QMainWindow {
