@@ -37,6 +37,7 @@ class MainWindow(QMainWindow, MenuBar, ThemeEdit, Tabs, DockWindows):
 
         self.resize(500, 500)
         self.lastDirectory = []
+        self.lastDockDirectory = []
 
     def closeEvent(self, event):
 

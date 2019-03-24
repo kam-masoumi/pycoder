@@ -17,6 +17,14 @@ class IconProvider(QFileIconProvider):
 class DockWindows:
 
     def directoryDockWindow(self, directory=None):
+
+        try:
+            oldDock = self.lastDockDirectory[0]
+            self.removeDockWidget(oldDock)
+            self.lastDockDirectory.clear()
+        except IndexError:
+            pass
+
         self.model = QFileSystemModel()
         self.model.setReadOnly(False)
         self.model.setRootPath('/home')
@@ -35,6 +43,7 @@ class DockWindows:
         tree.setColumnWidth(0, tree.width() / 3)
 
         dock = QDockWidget("Project", self)
+        self.lastDockDirectory.append(dock)
         dock.setMinimumWidth(200)
         dock.setAllowedAreas(Qt.LeftDockWidgetArea)
         dock.setWidget(tree)
