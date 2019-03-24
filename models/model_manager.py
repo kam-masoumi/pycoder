@@ -7,6 +7,8 @@ DATA_BASE.connect()
 class ModelManager:
 
     @staticmethod
-    def create_model(data_base):
-        DATA_BASE.create_tables([data_base], safe=True)
+    def create_model(table):
+        DATA_BASE.create_tables([table], safe=True)
+        if len(table) == 0:
+            table.create()
         return True

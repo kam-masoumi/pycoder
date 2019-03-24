@@ -94,7 +94,7 @@ class TextEditor(QTextEdit):
     def highlightCurrentLineByKey(self, event):
         extraSelectionsKey = []
         selection = QTextEdit.ExtraSelection()
-        lineColor = QColor(52, 73, 94)
+        lineColor = QColor(174, 182, 191, 60)
         selection.format.setBackground(lineColor)
         selection.format.setProperty(QTextFormat.FullWidthSelection, True)
         selection.cursor = self.textCursor()
@@ -105,7 +105,7 @@ class TextEditor(QTextEdit):
     def highlightCurrentLineByMouse(self, event):
         extraSelectionsMouse = []
         selection = QTextEdit.ExtraSelection()
-        lineColor = QColor(52, 73, 94)
+        lineColor = QColor(174, 182, 191, 60)
         selection.format.setBackground(lineColor)
         selection.format.setProperty(QTextFormat.FullWidthSelection, True)
         selection.cursor = self.textCursor()

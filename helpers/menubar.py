@@ -4,6 +4,7 @@ from PyQt5.QtWidgets import QAction, QMenu, QMessageBox
 from PyQt5.QtGui import QIcon, QCursor, QColor, QFont
 
 from helpers.dock_window import DockWindows
+from models.color import ColorScheme
 
 
 class MenuBar:
@@ -36,6 +37,22 @@ class MenuBar:
         saveAction.setStatusTip('Save File')
         saveAction.triggered.connect(self.save)
 
+        colorAction = QAction('Color Scheme', self)
+        colorAction.setShortcut('Ctrl+Shift+C')
+        colorAction.setStatusTip('Color Scheme')
+        colorAction.triggered.connect(self.colorScheme)
+
+        status = ColorScheme().get(id=1).dark_theme
+        themeAction = QAction('Dark Theme', self, checkable=True, checked=status)
+        themeAction.setShortcut('Ctrl+Shift+C')
+        themeAction.setStatusTip('Color Scheme')
+        themeAction.triggered.connect(lambda: self.changeTheme())
+
+        defaultthemeAction = QAction('Default Theme', self)
+        defaultthemeAction.setShortcut('Ctrl+Shift+R')
+        defaultthemeAction.setStatusTip('Default Theme')
+        defaultthemeAction.triggered.connect(lambda: self.setDefaultTheme())
+
         aboutAction = QAction('About', self)
         aboutAction.setStatusTip('About')
         aboutAction.triggered.connect(self.about)
@@ -55,6 +72,9 @@ class MenuBar:
 
         self.fileMenu3 = menubar.addMenu("&View")
         self.fileMenu3.addAction(self.terminalDock.toggleViewAction())
+        self.fileMenu3.addAction(colorAction)
+        self.fileMenu3.addAction(themeAction)
+        self.fileMenu3.addAction(defaultthemeAction)
         fileMenu4 = menubar.addMenu('&Tools')
         fileMenu4.addAction(runAction)
         fileMenu5 = menubar.addMenu('&Help')
@@ -81,8 +101,13 @@ class MenuBar:
         runFile = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         out, err = runFile.communicate()
 
+        status = ColorScheme().get(id=1)
         redColor = QColor(220, 20, 60)
-        whiteColor = QColor(255, 255, 255)
+
+        resultColor = QColor(0, 0, 0)
+        if status.dark_theme is True:
+            resultColor = QColor(255, 255, 255)
+
         font = QFont()
         font.setFamily('Courier')
         font.setBold(True)
@@ -90,10 +115,10 @@ class MenuBar:
         self.terminalShow.setFont(font)
 
         if len(out.decode()) >= 1:
-            self.terminalShow.setTextColor(whiteColor)
+            self.terminalShow.setTextColor(resultColor)
             self.terminalShow.append(out.decode())
         self.terminalShow.setTextColor(redColor)
         self.terminalShow.append(err.decode())
 
-        self.terminalShow.setTextColor(whiteColor)
+        self.terminalShow.setTextColor(resultColor)
         self.terminalShow.append('Process finished with exit code 0')

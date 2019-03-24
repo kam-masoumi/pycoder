@@ -71,3 +71,7 @@ class Tabs:
         self.lastDirectory.clear()
         self.lastDirectory.append(currentDirectory)
         self.statusBar().showMessage(currentDirectory)
+
+    def updateHighlighter(self):
+        currentTabWidget = self.tabs.currentWidget()
+        self.highlighter = Highlighter(currentTabWidget)

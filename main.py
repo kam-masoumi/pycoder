@@ -2,12 +2,13 @@ import webbrowser
 
 from PyQt5.QtCore import Qt, QFile, QStringListModel
 from PyQt5.QtGui import QPixmap, QCursor, QIcon
-from PyQt5.QtWidgets import QMainWindow, QFileDialog, QMessageBox, QLabel, QCompleter, QApplication, QTextEdit
+from PyQt5.QtWidgets import QMainWindow, QFileDialog, QMessageBox, QLabel, QCompleter, QApplication
 
 from helpers.menubar import MenuBar
-from helpers.themes import ThemeEdit
+from helpers.themes import ThemeEdit, codeColorScheme
 from helpers.tabs import Tabs
 from helpers.dock_window import DockWindows
+from models.color import ColorScheme
 
 
 class MainWindow(QMainWindow, MenuBar, ThemeEdit, Tabs, DockWindows):
@@ -142,3 +143,19 @@ class MainWindow(QMainWindow, MenuBar, ThemeEdit, Tabs, DockWindows):
         QApplication.restoreOverrideCursor()
 
         return QStringListModel(words, self.completer)
+
+    def changeTheme(self):
+        status = ColorScheme().get(id=1)
+        status.changeTheme()
+        return self.initThemeUI()
+
+    def colorScheme(self):
+        dialog = codeColorScheme(self)
+        dialog.show()
+
+    def setDefaultTheme(self):
+        reply = QMessageBox.question(self, "Warning!!!", 'Are you sure to set default theme?',
+                                     QMessageBox.Yes | QMessageBox.Cancel)
+        if reply == QMessageBox.Yes:
+            newTheme = ColorScheme().get(id=1)
+            newTheme.setDefault()
