@@ -16,7 +16,7 @@ class MenuBar:
         exitAction.setStatusTip('Exit application')
         exitAction.triggered.connect(self.close)
 
-        newAction = QAction(QIcon('images/new.png'), 'New', self)
+        newAction = QAction(QIcon('images/pythonfile.png'), 'New', self)
         newAction.setShortcut('Ctrl+N')
         newAction.setStatusTip('New File')
         newAction.triggered.connect(self.__init__)

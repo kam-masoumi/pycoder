@@ -2,7 +2,16 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon
 
 from PyQt5.QtWidgets import QFileSystemModel, QTreeView, QApplication, \
-    QDockWidget, QTextEdit, QWidget, QPushButton, QGridLayout
+    QDockWidget, QTextEdit, QWidget, QPushButton, QGridLayout, QFileIconProvider
+
+
+class IconProvider(QFileIconProvider):
+    def icon(self, fileInfo):
+        if fileInfo.isDir():
+            return QIcon("images/open.png")
+        elif fileInfo.fileName()[-2:] == 'py':
+            return QIcon('images/pythonfile.png')
+        return QFileIconProvider.icon(self, fileInfo)
 
 
 class DockWindows:
@@ -11,6 +20,7 @@ class DockWindows:
         self.model = QFileSystemModel()
         self.model.setReadOnly(False)
         self.model.setRootPath('/home')
+        self.model.setIconProvider(IconProvider())
 
         tree = QTreeView()
         tree.setModel(self.model)
