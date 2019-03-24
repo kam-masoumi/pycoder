@@ -19,7 +19,7 @@ class MenuBar:
         newAction = QAction(QIcon('images/pythonfile.png'), 'New', self)
         newAction.setShortcut('Ctrl+N')
         newAction.setStatusTip('New File')
-        newAction.triggered.connect(self.__init__)
+        newAction.triggered.connect(self.newFile)
 
         openAction = QAction(QIcon('images/open.png'), 'Open', self)
         openAction.setShortcut('Ctrl+O')

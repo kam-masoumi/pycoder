@@ -25,7 +25,7 @@ class DockWindows:
         tree = QTreeView()
         tree.setModel(self.model)
         tree.setRootIndex(self.model.index(f'{directory}'))
-        tree.doubleClicked.connect(self.test)
+        tree.doubleClicked.connect(self.openNewFile)
 
         tree.setAnimated(True)
         tree.setIndentation(20)
@@ -67,7 +67,7 @@ class DockWindows:
         dock.hide()
         return dock
 
-    def test(self, signal):
+    def openNewFile(self, signal):
         directory = self.model.filePath(signal)
         pythonFile = directory.split('/')[-1]
         try:

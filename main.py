@@ -50,6 +50,25 @@ class MainWindow(QMainWindow, MenuBar, ThemeEdit, Tabs, DockWindows):
         else:
             event.ignore()
 
+    def newFile(self):
+        options = QFileDialog.Options()
+        options |= QFileDialog.DontUseNativeDialog
+        directory, _ = QFileDialog.getSaveFileName(self,
+                                                  "New file",
+                                                  "Pyhton file (*.py)", options=options)
+
+        fileName = directory.split('/')[-1]
+        if fileName[-2:] == 'py':
+            try:
+                with open(directory, 'w') as f:
+                    f.write('')
+                    self.createTab('', fileName, directory)
+            except FileNotFoundError:
+                pass
+        else:
+            QMessageBox.warning(self, 'Error',
+                                "This is not python file!")
+
     def openFile(self):
         self.statusBar().showMessage('Open Text Files ')
         fileDirectory = QFileDialog.getOpenFileName(self, 'Open file', '/home', "Python Files (*.py *.h)")
