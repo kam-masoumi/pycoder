@@ -57,12 +57,48 @@ class MenuBar:
         aboutAction.setStatusTip('About')
         aboutAction.triggered.connect(self.about)
 
+        gitStatusAction = QAction('Status', self)
+        gitStatusAction.setStatusTip('Git Status Of Current Project')
+        gitStatusAction.setShortcut('Ctrl+G+S')
+        gitStatusAction.triggered.connect(lambda: self.gitStatus())
+
+        gitDiffAction = QAction('Diff', self)
+        gitDiffAction.setStatusTip('Git Diff Of Current Project')
+        gitDiffAction.setShortcut('Ctrl+G+D')
+        gitDiffAction.triggered.connect(lambda: self.gitDiff())
+
+        gitPushAction = QAction('Push', self)
+        gitPushAction.setStatusTip('Git Push Of Current Project')
+        gitPushAction.setShortcut('Ctrl+G+P')
+        gitPushAction.triggered.connect(lambda: self.gitPush())
+
+        gitPullAction = QAction('Pull', self)
+        gitPullAction.setStatusTip('Git Pull Of Current Project')
+        gitPullAction.setShortcut('Ctrl+G+U')
+        gitPullAction.triggered.connect(lambda: self.gitPull())
+
+        gitCheckoutAction = QAction('Checkout', self)
+        gitCheckoutAction.setStatusTip('Git Checkout Of Current Project')
+        gitCheckoutAction.setShortcut('Ctrl+G+C')
+        gitCheckoutAction.triggered.connect(lambda: self.gitCheckout())
+
+        gitCreateAction = QAction('Create Branch', self)
+        gitCreateAction.setStatusTip('Git Create Branch Of Current Project')
+        gitCreateAction.setShortcut('Ctrl+G+N')
+        gitCreateAction.triggered.connect(lambda: self.gitCreateBranch())
+
+        gitCommitAction = QAction('Commit', self)
+        gitCommitAction.setStatusTip('Git Commit')
+        gitCommitAction.setShortcut('Ctrl+G+A')
+        gitCommitAction.triggered.connect(lambda: self.gitCommit())
+
         runAction = QAction(QIcon('images/run.png'), 'Run', self)
         runAction.setStatusTip('Run selected configuration')
         runAction.setShortcut('Ctrl+Shift+R')
         runAction.triggered.connect(lambda: self.runCommand())
 
         menubar = self.menuBar()
+
         fileMenu = menubar.addMenu('&File')
         fileMenu.addAction(newAction)
         fileMenu.addAction(openAction)
@@ -75,8 +111,19 @@ class MenuBar:
         self.fileMenu3.addAction(colorAction)
         self.fileMenu3.addAction(themeAction)
         self.fileMenu3.addAction(defaultthemeAction)
+
         fileMenu4 = menubar.addMenu('&Tools')
         fileMenu4.addAction(runAction)
+
+        fileMenu5 = menubar.addMenu('&Git')
+        fileMenu5.addAction(gitStatusAction)
+        fileMenu5.addAction(gitDiffAction)
+        fileMenu5.addAction(gitCommitAction)
+        fileMenu5.addAction(gitPushAction)
+        fileMenu5.addAction(gitPullAction)
+        fileMenu5.addAction(gitCheckoutAction)
+        fileMenu5.addAction(gitCreateAction)
+
         fileMenu5 = menubar.addMenu('&Help')
         fileMenu5.addAction(aboutAction)
 

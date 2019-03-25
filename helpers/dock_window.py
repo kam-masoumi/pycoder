@@ -4,6 +4,8 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QFileSystemModel, QTreeView, QApplication, \
     QDockWidget, QTextEdit, QWidget, QPushButton, QGridLayout, QFileIconProvider
 
+from git.git_commands import Git
+
 
 class IconProvider(QFileIconProvider):
     def icon(self, fileInfo):
@@ -22,6 +24,7 @@ class DockWindows:
             oldDock = self.lastDockDirectory[0]
             self.removeDockWidget(oldDock)
             self.lastDockDirectory.clear()
+            self.lastGit.clear()
         except IndexError:
             pass
 
@@ -49,6 +52,7 @@ class DockWindows:
         dock.setWidget(tree)
 
         self.addDockWidget(Qt.LeftDockWidgetArea, dock)
+        self.lastGit.append(Git(directory))
         return dock
 
     def textEditorDockWindows(self):

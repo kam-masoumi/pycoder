@@ -2,7 +2,8 @@ import webbrowser
 
 from PyQt5.QtCore import Qt, QFile, QStringListModel
 from PyQt5.QtGui import QPixmap, QCursor, QIcon
-from PyQt5.QtWidgets import QMainWindow, QFileDialog, QMessageBox, QLabel, QCompleter, QApplication
+from PyQt5.QtWidgets import QMainWindow, QFileDialog, QMessageBox, QLabel, QCompleter, QApplication, QInputDialog, \
+    QLineEdit
 
 from helpers.menubar import MenuBar
 from helpers.themes import ThemeEdit, codeColorScheme
@@ -38,6 +39,7 @@ class MainWindow(QMainWindow, MenuBar, ThemeEdit, Tabs, DockWindows):
         self.resize(500, 500)
         self.lastDirectory = []
         self.lastDockDirectory = []
+        self.lastGit = []
 
     def closeEvent(self, event):
 
@@ -160,3 +162,112 @@ class MainWindow(QMainWindow, MenuBar, ThemeEdit, Tabs, DockWindows):
         if reply == QMessageBox.Yes:
             newTheme = ColorScheme().get(id=1)
             newTheme.setDefault()
+
+    def gitStatus(self):
+
+        try:
+            git = self.lastGit[-1]
+        except IndexError:
+            QMessageBox.warning(self, 'Error',
+                                "Does not exist any git repository!")
+            return False
+
+        result = git.status()
+        QMessageBox.information(self, "Git Status", result)
+
+    def gitDiff(self):
+        try:
+            git = self.lastGit[-1]
+        except IndexError:
+            QMessageBox.warning(self, 'Error',
+                                "Does not exist any git repository!")
+            return False
+
+        result = git.diff()
+        QMessageBox.information(self, "Git Diff", result)
+
+    def gitCommit(self):
+        try:
+            git = self.lastGit[-1]
+        except IndexError:
+            QMessageBox.warning(self, 'Error',
+                                "Does not exist any git repository!")
+            return False
+
+        message, ok = QInputDialog.getText(self, "Commit message",
+                                              "Message:", QLineEdit.Normal)
+        if ok and message != '':
+            result = git.commit(message)
+            QMessageBox.information(self, "Git Commit", result)
+
+    def gitPush(self):
+        try:
+            git = self.lastGit[-1]
+        except IndexError:
+            QMessageBox.warning(self, 'Error',
+                                "Does not exist any git repository!")
+            return False
+
+        allBranch = git.branchs()
+        for branch in allBranch:
+            if branch.isidentifier() is False:
+                currentBranch = branch
+
+        reply = QMessageBox.question(self, "Git Push",
+                                     f'Are you sure want push in {currentBranch}?',
+                                     QMessageBox.Yes | QMessageBox.Cancel)
+
+        if reply == QMessageBox.Yes:
+            result = git.push(currentBranch)
+            QMessageBox.information(self, "Git Push", result)
+
+    def gitPull(self):
+        try:
+            git = self.lastGit[-1]
+        except IndexError:
+            QMessageBox.warning(self, 'Error',
+                                "Does not exist any git repository!")
+            return False
+
+        nameBranch, ok = QInputDialog.getText(self, "Git Pull",
+                                              "Branch Name:", QLineEdit.Normal)
+        if ok and nameBranch != '':
+            result = git.pull(nameBranch)
+            QMessageBox.information(self, "Git Pull", result)
+
+    def gitCheckout(self):
+        try:
+            git = self.lastGit[-1]
+        except IndexError:
+            QMessageBox.warning(self, 'Error',
+                                "Does not exist any git repository!")
+            return False
+
+        allBranch = git.branchs()
+        for branch in allBranch:
+            if branch.isidentifier() is False:
+                index = allBranch.index(branch)
+
+        branch, ok = QInputDialog.getItem(self, "Choice your branch",
+                                        "Branchs:", allBranch, index, False)
+        if ok and branch:
+            if branch.isalnum():
+                result = git.checkout(branch)
+                QMessageBox.information(self, "Git Checkout", result)
+
+    def gitCreateBranch(self):
+        try:
+            git = self.lastGit[-1]
+        except IndexError:
+            QMessageBox.warning(self, 'Error',
+                                "Does not exist any git repository!")
+            return False
+
+        nameBranch, ok = QInputDialog.getText(self, "Create New Branch",
+                                        "Branch Name:", QLineEdit.Normal)
+        if ok and nameBranch != '':
+            result = git.create(nameBranch)
+            QMessageBox.information(self, f"Create New Branch {nameBranch} Successfully", result)
+
+    def gitMerge(self):
+        pass
