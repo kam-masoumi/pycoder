@@ -39,7 +39,7 @@ class Tabs:
         self.tabs.addTab(newTextEditor, f'{file_name}')
 
         tabIndex = self.tabs.indexOf(newTextEditor)
-        self.tabs.setTabIcon(tabIndex, QIcon('images/python1.png'))
+        self.tabs.setTabIcon(tabIndex, QIcon('images/pythonfile.png'))
         cache.setdefault(file_name, directory)
 
         self.tabs.setCurrentWidget(newTextEditor)

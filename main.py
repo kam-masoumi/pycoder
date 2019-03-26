@@ -32,11 +32,11 @@ class MainWindow(QMainWindow, MenuBar, ThemeEdit, Tabs, DockWindows):
                                              "width: 20px;")
         backGround = QLabel()
         backGround.setAlignment(Qt.AlignCenter)
-        backGround.setPixmap(QPixmap("images/python.png"))
+        backGround.setPixmap(QPixmap("images/python.jpg"))
 
         self.setCentralWidget(backGround)
 
-        self.resize(500, 500)
+        self.showMaximized()
         self.lastDirectory = []
         self.lastDockDirectory = []
         self.lastGit = []

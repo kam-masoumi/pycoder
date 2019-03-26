@@ -10,7 +10,7 @@ from git.git_commands import Git
 class IconProvider(QFileIconProvider):
     def icon(self, fileInfo):
         if fileInfo.isDir():
-            return QIcon("images/open.png")
+            return QIcon("images/directory.png")
         elif fileInfo.fileName()[-2:] == 'py':
             return QIcon('images/pythonfile.png')
         return QFileIconProvider.icon(self, fileInfo)

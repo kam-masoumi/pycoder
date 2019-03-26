@@ -17,12 +17,12 @@ class MenuBar:
         exitAction.setStatusTip('Exit application')
         exitAction.triggered.connect(self.close)
 
-        newAction = QAction(QIcon('images/pythonfile.png'), 'New', self)
+        newAction = QAction(QIcon('images/new.png'), 'New', self)
         newAction.setShortcut('Ctrl+N')
         newAction.setStatusTip('New File')
         newAction.triggered.connect(self.newFile)
 
-        openAction = QAction(QIcon('images/open.png'), 'Open', self)
+        openAction = QAction(QIcon('images/directory.png'), 'Open', self)
         openAction.setShortcut('Ctrl+O')
         openAction.setStatusTip('Open File')
         openAction.triggered.connect(self.openFile)
@@ -145,6 +145,7 @@ class MenuBar:
             return False
         self.terminalDock.show()
         cmd = ['python', f'{directory}']
+
         runFile = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         out, err = runFile.communicate()
 
