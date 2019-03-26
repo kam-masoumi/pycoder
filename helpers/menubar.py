@@ -4,6 +4,7 @@ from PyQt5.QtWidgets import QAction, QMenu, QMessageBox
 from PyQt5.QtGui import QIcon, QCursor, QColor, QFont
 
 from helpers.dock_window import DockWindows
+from helpers.memory import Memory
 from models.color import ColorScheme
 
 
@@ -146,6 +147,7 @@ class MenuBar:
         self.terminalDock.show()
         cmd = ['python', f'{directory}']
 
+        Memory().memoryLimit()
         runFile = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         out, err = runFile.communicate()
 
@@ -170,3 +172,6 @@ class MenuBar:
 
         self.terminalShow.setTextColor(resultColor)
         self.terminalShow.append('Process finished with exit code 0')
+
+
+
