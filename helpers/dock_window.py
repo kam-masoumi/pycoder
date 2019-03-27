@@ -1,11 +1,14 @@
+import subprocess
+
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QIcon
+from PyQt5.QtGui import QIcon, QTextCursor
+from code import InteractiveConsole
 
 from PyQt5.QtWidgets import QFileSystemModel, QTreeView, QApplication, \
-    QDockWidget, QTextEdit, QWidget, QPushButton, QGridLayout, QFileIconProvider
+    QDockWidget, QTextEdit, QWidget, QPushButton, QGridLayout, QFileIconProvider, QPlainTextEdit
 
 from git.git_commands import Git
-
+from helpers.text_editor import TextEditor
 
 class IconProvider(QFileIconProvider):
     def icon(self, fileInfo):
@@ -55,8 +58,18 @@ class DockWindows:
         self.lastGit.append(Git(directory))
         return dock
 
-    def textEditorDockWindows(self):
-        pass
+    def consoleDockWindows(self):
+        self.console = QTextEdit()
+        self.console.setText('>>> ')
+        self.console.keyReleaseEvent = self.consoleNewLine
+        dock = QDockWidget("Console", self)
+        dock.setMinimumHeight(300)
+        dock.setWidget(self.console)
+        dock.hide()
+        self.addDockWidget(Qt.BottomDockWidgetArea, dock)
+
+
+        return dock
 
     def terminalDockWindow(self):
         dockLayout = QGridLayout()
@@ -67,7 +80,8 @@ class DockWindows:
         runButton = QPushButton(QIcon('images/run.png'), '')
         runButton.clicked.connect(self.runCommand)
 
-        dock = QDockWidget("Terminal", self)
+        dock = QDockWidget("Run", self)
+        dock.setMinimumHeight(300)
         self.addDockWidget(Qt.BottomDockWidgetArea, dock)
 
         dockedWidget = QWidget(self)
@@ -89,3 +103,48 @@ class DockWindows:
                     self.createTab(f.read(), pythonFile, directory)
         except IndexError:
             pass
+
+    def consoleNewLine(self, event):
+        if event.key() == 16777220:
+
+            cursor = self.console.textCursor()
+            cursor.movePosition(QTextCursor.End)
+
+            document = self.console.document()
+            lineCount = document.lineCount()
+            lastCode = document.findBlockByLineNumber(lineCount - 2).text()
+            result = console.enter(lastCode[4:])
+            self.console.append(result)
+            self.console.append('>>> ')
+
+
+from code import InteractiveConsole
+from imp import new_module
+
+
+class Console(InteractiveConsole):
+
+    def __init__(self, names=None):
+        names = names or {}
+        names['console'] = self
+        InteractiveConsole.__init__(self, names)
+        self.superspace = new_module('superspace')
+
+    def enter(self, source):
+        import subprocess
+        source = self.preprocess(source)
+
+        with open('console.py', 'a') as f:
+            f.write('\n')
+            f.write(source)
+        runFile = subprocess.Popen(['python', 'console.py'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        out, err = runFile.communicate()
+        print(out, err)
+        return out.decode()
+
+    @staticmethod
+    def preprocess(source):
+        return source
+
+
+console = Console()

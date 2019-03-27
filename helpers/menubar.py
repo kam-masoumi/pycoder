@@ -12,6 +12,7 @@ class MenuBar:
 
     def initMenuUI(self):
         self.terminalDock = DockWindows.terminalDockWindow(self)
+        self.consoleDock = DockWindows.consoleDockWindows(self)
 
         exitAction = QAction(QIcon('images/exit.png'), 'Exit', self)
         exitAction.setShortcut('Ctrl+Q')
@@ -108,12 +109,13 @@ class MenuBar:
         fileMenu.addAction(exitAction)
 
         self.fileMenu3 = menubar.addMenu("&View")
-        self.fileMenu3.addAction(self.terminalDock.toggleViewAction())
         self.fileMenu3.addAction(colorAction)
         self.fileMenu3.addAction(themeAction)
         self.fileMenu3.addAction(defaultthemeAction)
 
         fileMenu4 = menubar.addMenu('&Tools')
+        fileMenu4.addAction(self.terminalDock.toggleViewAction())
+        fileMenu4.addAction(self.consoleDock.toggleViewAction())
         fileMenu4.addAction(runAction)
 
         fileMenu5 = menubar.addMenu('&Git')

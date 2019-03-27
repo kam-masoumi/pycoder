@@ -32,7 +32,7 @@ class MainWindow(QMainWindow, MenuBar, ThemeEdit, Tabs, DockWindows):
                                              "width: 20px;")
         backGround = QLabel()
         backGround.setAlignment(Qt.AlignCenter)
-        backGround.setPixmap(QPixmap("images/python.jpg"))
+        backGround.setPixmap(QPixmap("images/pycoder.png"))
 
         self.setCentralWidget(backGround)
 
