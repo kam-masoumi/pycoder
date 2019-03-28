@@ -1,14 +1,14 @@
-import subprocess
+import os
 
-from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QIcon, QTextCursor
-from code import InteractiveConsole
+from PyQt5.QtCore import Qt, QProcess
+from PyQt5.QtGui import QIcon
 
 from PyQt5.QtWidgets import QFileSystemModel, QTreeView, QApplication, \
-    QDockWidget, QTextEdit, QWidget, QPushButton, QGridLayout, QFileIconProvider, QPlainTextEdit
+    QDockWidget, QTextEdit, QWidget, QPushButton, QGridLayout, QFileIconProvider, QVBoxLayout
 
 from git.git_commands import Git
-from helpers.text_editor import TextEditor
+from models.color import ColorScheme
+
 
 class IconProvider(QFileIconProvider):
     def icon(self, fileInfo):
@@ -17,6 +17,33 @@ class IconProvider(QFileIconProvider):
         elif fileInfo.fileName()[-2:] == 'py':
             return QIcon('images/pythonfile.png')
         return QFileIconProvider.icon(self, fileInfo)
+
+
+class Embterminal(QWidget):
+
+    def __init__(self):
+        QWidget.__init__(self)
+        self.process = QProcess(self)
+        availableSize = QApplication.desktop().availableGeometry(self).size()
+
+        status = ColorScheme().get(id=1).dark_theme
+        if status is True:
+            with open('.Xdefaults', 'w') as f:
+                f.write('xterm*background:   #313131\n'
+                        'xterm*foreground:   white\n'
+                        'xterm*font:     *-fixed-*-*-*-20-*\n'
+                        'xterm*BorderWidth: 0')
+        else:
+            with open('.Xdefaults', 'w') as f:
+                f.write('xterm*background:   #FFFFFF\n'
+                        'xterm*foreground:   black\n'
+                        'xterm*font:     *-fixed-*-*-*-20-*\n'
+                        'xterm*BorderWidth: 0\n')
+
+        os.system('xrdb .Xdefaults')
+        self.process.start('xterm', ['-into', str(int(self.winId()))])
+        self.setFixedSize(availableSize/3)
+        self.setMaximumWidth(availableSize.width())
 
 
 class DockWindows:
@@ -59,15 +86,12 @@ class DockWindows:
         return dock
 
     def consoleDockWindows(self):
-        self.console = QTextEdit()
-        self.console.setText('>>> ')
-        self.console.keyReleaseEvent = self.consoleNewLine
+        self.console = Embterminal()
         dock = QDockWidget("Console", self)
-        dock.setMinimumHeight(300)
+        # dock.setMinimumHeight(300)
         dock.setWidget(self.console)
         dock.hide()
         self.addDockWidget(Qt.BottomDockWidgetArea, dock)
-
 
         return dock
 
@@ -103,48 +127,3 @@ class DockWindows:
                     self.createTab(f.read(), pythonFile, directory)
         except IndexError:
             pass
-
-    def consoleNewLine(self, event):
-        if event.key() == 16777220:
-
-            cursor = self.console.textCursor()
-            cursor.movePosition(QTextCursor.End)
-
-            document = self.console.document()
-            lineCount = document.lineCount()
-            lastCode = document.findBlockByLineNumber(lineCount - 2).text()
-            result = console.enter(lastCode[4:])
-            self.console.append(result)
-            self.console.append('>>> ')
-
-
-from code import InteractiveConsole
-from imp import new_module
-
-
-class Console(InteractiveConsole):
-
-    def __init__(self, names=None):
-        names = names or {}
-        names['console'] = self
-        InteractiveConsole.__init__(self, names)
-        self.superspace = new_module('superspace')
-
-    def enter(self, source):
-        import subprocess
-        source = self.preprocess(source)
-
-        with open('console.py', 'a') as f:
-            f.write('\n')
-            f.write(source)
-        runFile = subprocess.Popen(['python', 'console.py'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        out, err = runFile.communicate()
-        print(out, err)
-        return out.decode()
-
-    @staticmethod
-    def preprocess(source):
-        return source
-
-
-console = Console()
