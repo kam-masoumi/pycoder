@@ -1,15 +1,17 @@
 import webbrowser
 
 from PyQt5.QtCore import Qt, QFile, QStringListModel
-from PyQt5.QtGui import QPixmap, QCursor, QIcon
+from PyQt5.QtGui import QPixmap, QCursor, QIcon, QTextDocument
 from PyQt5.QtWidgets import QMainWindow, QFileDialog, QMessageBox, QLabel, QCompleter, QApplication, QInputDialog, \
     QLineEdit
 
 from helpers.menubar import MenuBar
+from helpers.search import Find
 from helpers.themes import ThemeEdit, codeColorScheme
 from helpers.tabs import Tabs
 from helpers.dock_window import DockWindows
 from models.color import ColorScheme
+from models.search import Search
 
 
 class MainWindow(QMainWindow, MenuBar, ThemeEdit, Tabs, DockWindows):
@@ -271,3 +273,53 @@ class MainWindow(QMainWindow, MenuBar, ThemeEdit, Tabs, DockWindows):
 
     def gitMerge(self):
         pass
+
+    def findAndReplace(self):
+        currentTextEditor = self.tabs.currentWidget()
+
+        find = Find(self)
+        find.show()
+
+        def handleFind():
+            oldSearch = Search().get(id=1)
+            caseSensitively = oldSearch.case_sensitively
+            wholeWords = oldSearch.whole_words
+
+            f = find.searchText.toPlainText()
+            if caseSensitively is True and wholeWords is False:
+                flag = QTextDocument.FindBackward and QTextDocument.FindCaseSensitively
+
+            elif caseSensitively is False and wholeWords is False:
+                flag = QTextDocument.FindBackward
+
+            elif caseSensitively is False and wholeWords is True:
+                flag = QTextDocument.FindBackward and QTextDocument.FindWholeWords
+
+            elif caseSensitively is True and wholeWords is True:
+                flag = QTextDocument.FindBackward and QTextDocument.FindCaseSensitively and QTextDocument.FindWholeWords
+
+            try:
+                currentTextEditor.find(f, flag)
+            except AttributeError:
+                QMessageBox.warning(self, 'Error',
+                                    "Does not exist any text editor!")
+
+        def handleReplace():
+            f = find.searchText.toPlainText()
+            r = find.replaceText.toPlainText()
+
+            try:
+                text = currentTextEditor.toPlainText()
+            except AttributeError:
+                QMessageBox.warning(self, 'Error',
+                                    "Does not exist any text editor!")
+                return False
+
+            newText = text.replace(f, r)
+
+            currentTextEditor.clear()
+            currentTextEditor.append(newText)
+
+        find.findButton.clicked.connect(handleFind)
+        find.replaceButton.clicked.connect(handleReplace)
+

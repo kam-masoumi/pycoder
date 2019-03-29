@@ -39,6 +39,11 @@ class MenuBar:
         saveAction.setStatusTip('Save File')
         saveAction.triggered.connect(self.save)
 
+        findAction = QAction(QIcon("images/find.png"), "Find", self)
+        findAction.setStatusTip("Find words in your document")
+        findAction.setShortcut("Ctrl+F")
+        findAction.triggered.connect(self.findAndReplace)
+
         colorAction = QAction('Color Scheme', self)
         colorAction.setShortcut('Ctrl+Shift+C')
         colorAction.setStatusTip('Color Scheme')
@@ -108,6 +113,9 @@ class MenuBar:
         fileMenu.addAction(saveAction)
         fileMenu.addAction(exitAction)
 
+        fileMenu2 = menubar.addMenu('&Edit')
+        fileMenu2.addAction(findAction)
+
         self.fileMenu3 = menubar.addMenu("&View")
         self.fileMenu3.addAction(colorAction)
         self.fileMenu3.addAction(themeAction)
@@ -127,8 +135,8 @@ class MenuBar:
         fileMenu5.addAction(gitCheckoutAction)
         fileMenu5.addAction(gitCreateAction)
 
-        fileMenu5 = menubar.addMenu('&Help')
-        fileMenu5.addAction(aboutAction)
+        fileMenu6 = menubar.addMenu('&Help')
+        fileMenu6.addAction(aboutAction)
 
     def contextMenuEvent(self, event):
         self.menu = QMenu(self)
