@@ -5,6 +5,7 @@ from PyQt5.QtGui import QPixmap, QCursor, QIcon, QTextDocument
 from PyQt5.QtWidgets import QMainWindow, QFileDialog, QMessageBox, QLabel, QCompleter, QApplication, QInputDialog, \
     QLineEdit
 
+from git.git_commands import Git
 from helpers.menubar import MenuBar
 from helpers.search import Find
 from helpers.themes import ThemeEdit, codeColorScheme
@@ -165,6 +166,19 @@ class MainWindow(QMainWindow, MenuBar, ThemeEdit, Tabs, DockWindows):
             newTheme = ColorScheme().get(id=1)
             newTheme.setDefault()
 
+    def gitClone(self):
+        directory = str(QFileDialog.getExistingDirectory(self, "Select Directory"))
+        repository, ok = QInputDialog.getText(self, "Repository",
+                                           "repository:", QLineEdit.Normal)
+
+        if ok and repository != '':
+            repo = repository.split('/')[-1][:-4]
+            direc = directory + '/' + repo
+            result = Git(directory).clone(repository)
+            directoryDock = DockWindows.directoryDockWindow(self, direc)
+            self.fileMenu3.addAction(directoryDock.toggleViewAction())
+            QMessageBox.information(self, "Git Cloning", result)
+
     def gitStatus(self):
 
         try:
@@ -322,4 +336,3 @@ class MainWindow(QMainWindow, MenuBar, ThemeEdit, Tabs, DockWindows):
 
         find.findButton.clicked.connect(handleFind)
         find.replaceButton.clicked.connect(handleReplace)
-

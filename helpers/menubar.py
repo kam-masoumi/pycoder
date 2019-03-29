@@ -64,6 +64,11 @@ class MenuBar:
         aboutAction.setStatusTip('About')
         aboutAction.triggered.connect(self.about)
 
+        gitCloneAction = QAction('Clone', self)
+        gitCloneAction.setStatusTip('Git Clone Of Current Repository')
+        gitCloneAction.setShortcut('Ctrl+G+K')
+        gitCloneAction.triggered.connect(lambda: self.gitClone())
+
         gitStatusAction = QAction('Status', self)
         gitStatusAction.setStatusTip('Git Status Of Current Project')
         gitStatusAction.setShortcut('Ctrl+G+S')
@@ -127,6 +132,7 @@ class MenuBar:
         fileMenu4.addAction(runAction)
 
         fileMenu5 = menubar.addMenu('&Git')
+        fileMenu5.addAction(gitCloneAction)
         fileMenu5.addAction(gitStatusAction)
         fileMenu5.addAction(gitDiffAction)
         fileMenu5.addAction(gitCommitAction)
